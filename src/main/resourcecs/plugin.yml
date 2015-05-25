@@ -1,0 +1,6 @@
+name: FlintSpleef
+description: A technology demonstration for the Flint framework.
+author: Max Roncacé
+website: http://caseif.net/
+version: 1.0.0-SNAPSHOT
+main: net.caseif.flint.spleef.Main
