@@ -113,13 +113,7 @@ task sourceJar(type: Jar) {
     classifier = 'sources'
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    from javadoc.destinationDir
-    classifier = 'javadoc'
-}
-
 artifacts {
     archives jar
     archives sourceJar
-    archives javadocJar
 }
