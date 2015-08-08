@@ -34,9 +34,9 @@ import net.caseif.flint.event.round.RoundTimerTickEvent;
 import net.caseif.flint.event.round.challenger.ChallengerJoinRoundEvent;
 import net.caseif.flint.spleef.Main;
 
+import com.google.common.eventbus.Subscribe;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 /**
@@ -46,7 +46,7 @@ import org.bukkit.event.Listener;
  */
 public class MinigameListener implements Listener {
 
-    @EventHandler
+    @Subscribe
     public void onChallengerJoinRound(ChallengerJoinRoundEvent event) {
         // check if round is in progress
         if (event.getRound().getLifecycleStage().getId().equals(Main.PLAYING_STAGE_ID)) {
@@ -56,7 +56,7 @@ public class MinigameListener implements Listener {
         }
     }
 
-    @EventHandler
+    @Subscribe
     public void onRoundChangeLifecycleStage(RoundChangeLifecycleStageEvent event) {
         // check if round is in progress
         if (event.getStageAfter().getId().equals(Main.PLAYING_STAGE_ID)) {
@@ -68,7 +68,7 @@ public class MinigameListener implements Listener {
         }
     }
 
-    @EventHandler
+    @Subscribe
     public void onRoundTimerTick(RoundTimerTickEvent event) {
         // iterate the challengers once per round tick
         for (Challenger challenger : event.getRound().getChallengers()) {

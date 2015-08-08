@@ -60,7 +60,7 @@ repositories {
 // Project dependencies
 dependencies {
 	compile 'net.caseif.flint:flint:1.0-SNAPSHOT'
-    compile 'org.bukkit:bukkit:1.8.6-R0.1-SNAPSHOT'
+    compile 'org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT'
 }
 
 tasks.withType(JavaCompile) {

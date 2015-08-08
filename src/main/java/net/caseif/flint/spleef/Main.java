@@ -70,7 +70,6 @@ public class Main extends JavaPlugin {
         // general plugin initialization
         plugin = this;
         Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
-        Bukkit.getPluginManager().registerEvents(new MinigameListener(), this);
 
         MIN_PLAYERS = getConfig().getInt("min-prep-players");
 
@@ -82,6 +81,8 @@ public class Main extends JavaPlugin {
 
         // Flint initialization
         mg = FlintCore.registerPlugin(this.getName());
+        mg.getEventBus().register(new MinigameListener());
+
         ImmutableSet<LifecycleStage> stages = ImmutableSet.copyOf(new LifecycleStage[]{
                 new LifecycleStage(WAITING_STAGE_ID, -1),
                 new LifecycleStage(PREPARING_STAGE_ID, getConfig().getInt("prep-time")),
