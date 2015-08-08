@@ -4,4 +4,4 @@ author: Max Roncacé
 website: http://caseif.net/
 version: 1.0.0-SNAPSHOT
 main: net.caseif.flint.spleef.Main
-depends: [Steel]
+depend: [Steel]
