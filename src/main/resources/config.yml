@@ -1,0 +1,18 @@
+# ############################# #
+# # FlintSpleef Configuration # #
+# ############################# #
+
+# The time of the preparation period for rounds in seconds
+prep-time: 30
+
+# The time of rounds in seconds
+round-time: 120
+
+# The minimum player count required for a round to enter its prep period
+min-prep-players: 2
+
+# The maximum player count allowed per arena
+arena-size: 32
+
+# The shovel type to give to players. 0 = wooden, 1 = stone, 2 = iron, 3 = gold, 4 = diamond. Defaults to gold.
+shovel-type: 3

@@ -28,16 +28,83 @@
  */
 package net.caseif.flint.spleef;
 
+import net.caseif.flint.FlintCore;
+import net.caseif.flint.config.ConfigNode;
+import net.caseif.flint.minigame.Minigame;
+import net.caseif.flint.round.LifecycleStage;
+import net.caseif.flint.spleef.listener.BlockListener;
+import net.caseif.flint.spleef.listener.MinigameListener;
+
+import com.google.common.collect.ImmutableSet;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
+
 public class Main extends JavaPlugin {
-	
+
+    public static final String WAITING_STAGE_ID = "waiting";
+    public static final String PREPARING_STAGE_ID = "preparing";
+    public static final String PLAYING_STAGE_ID = "playing";
+
+    public static ArrayList<Material> SHOVELS = new ArrayList<>();
+    public static ItemStack SHOVEL;
+
+    private static JavaPlugin plugin;
+    private static Minigame mg;
+
+    public int MIN_PLAYERS = Integer.MAX_VALUE;
+
+    static {
+        SHOVELS.add(Material.WOOD_SPADE);
+        SHOVELS.add(Material.STONE_SPADE);
+        SHOVELS.add(Material.IRON_SPADE);
+        SHOVELS.add(Material.GOLD_SPADE);
+        SHOVELS.add(Material.DIAMOND_SPADE);
+    }
+
     @Override
     public void onEnable() {
+        // general plugin initialization
+        plugin = this;
+        Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
+        Bukkit.getPluginManager().registerEvents(new MinigameListener(), this);
+
+        MIN_PLAYERS = getConfig().getInt("min-prep-players");
+
+        int shovelType = getConfig().getInt("shovel-type");
+        Material shovelMaterial = shovelType >= 0 && shovelType < SHOVELS.size()
+                ? SHOVELS.get(shovelType)
+                : SHOVELS.get(3);
+        SHOVEL = new ItemStack(shovelMaterial, 1);
+
+        // Flint initialization
+        mg = FlintCore.registerPlugin(this.getName());
+        ImmutableSet<LifecycleStage> stages = ImmutableSet.copyOf(new LifecycleStage[]{
+                new LifecycleStage(WAITING_STAGE_ID, -1),
+                new LifecycleStage(PREPARING_STAGE_ID, getConfig().getInt("prep-time")),
+                new LifecycleStage(PLAYING_STAGE_ID, getConfig().getInt("round-time"))
+        });
+        mg.setConfigValue(ConfigNode.DEFAULT_LIFECYCLE_STAGES, stages);
+        mg.setConfigValue(ConfigNode.MAX_PLAYERS, getConfig().getInt("arena-size"));
     }
-	
+
     @Override
     public void onDisable() {
+        SHOVELS = null;
+        SHOVEL = null;
+        mg = null;
+        plugin = null;
     }
-	
+
+    public static JavaPlugin getPlugin() {
+        return plugin;
+    }
+
+    public static Minigame getMinigame() {
+        return mg;
+    }
+
 }
