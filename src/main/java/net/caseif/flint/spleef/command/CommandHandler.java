@@ -26,48 +26,43 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.caseif.flint.spleef.listener;
+package net.caseif.flint.spleef.command;
 
-import net.caseif.flint.round.challenger.Challenger;
-import net.caseif.flint.spleef.Main;
+import static net.caseif.flint.spleef.Main.ERROR_COLOR;
 
-import com.google.common.base.Optional;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 
 /**
- * Listener for block-related events.
+ * Handler for all FlintSpleef commands.
  *
  * @author Max Roncacé
  */
-public class BlockListener implements Listener {
+public class CommandHandler implements CommandExecutor {
 
-    @EventHandler
-    public void onBlockDamage(BlockDamageEvent event) {
-        // check if the damager is a challenger
-        Optional<Challenger> challenger = Main.getMinigame().getChallenger(event.getPlayer().getUniqueId());
-        if (challenger.isPresent()) { // damager is a challenger
-            // check if the round hasn't started yet
-            if (!challenger.get().getRound().getLifecycleStage().getId().equals(Main.PLAYING_STAGE_ID)) {
-                event.setCancelled(true); // can't break blocks in advance
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (args.length > 0) {
+            if (args[0].equalsIgnoreCase("arena")) {
+                if (args.length > 1) {
+                    if (args[1].equalsIgnoreCase("create")) {
+                        CreateArenaCommand.handle(sender,  args);
+                    } else {
+                        sender.sendMessage(ERROR_COLOR + "Invalid arguments! Usage: /ts arena [command]");
+                    }
+                } else {
+                    sender.sendMessage(ERROR_COLOR + "Too few arguments! Usage: /fs arena [command]");
+                }
+            } else if (args[0].equalsIgnoreCase("join")) {
+                JoinArenaCommand.handle(sender, args);
+            } else {
+                sender.sendMessage(ERROR_COLOR + "Invalid arguments! Usage: /fs [command]");
             }
-            // check if they're holding a shovel
-            if (!Main.SHOVELS.contains(event.getItemInHand().getType())) {
-                event.setCancelled(true); // can't break blocks without a shovel
-            }
+        } else {
+            sender.sendMessage(ERROR_COLOR + "Too few arguments! Usage: /fs [command]");
         }
-    }
-
-    @EventHandler
-    public void onBlockBreak(BlockBreakEvent event) {
-        // check if the damager is a challenger
-        Optional<Challenger> challenger = Main.getMinigame().getChallenger(event.getPlayer().getUniqueId());
-        if (challenger.isPresent()) { // damager is a challenger
-            event.getBlock().getDrops().clear(); // clear the drops
-            event.getPlayer().getItemInHand().setDurability((short) 0); // avoid damaging the shovel
-        }
+        return true;
     }
 
 }

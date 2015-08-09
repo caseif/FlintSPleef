@@ -32,11 +32,15 @@ import net.caseif.flint.FlintCore;
 import net.caseif.flint.config.ConfigNode;
 import net.caseif.flint.minigame.Minigame;
 import net.caseif.flint.round.LifecycleStage;
+import net.caseif.flint.spleef.command.CommandHandler;
+import net.caseif.flint.spleef.command.CreateArenaCommand;
 import net.caseif.flint.spleef.listener.BlockListener;
 import net.caseif.flint.spleef.listener.MinigameListener;
+import net.caseif.flint.spleef.listener.PlayerListener;
 
 import com.google.common.collect.ImmutableSet;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -45,9 +49,15 @@ import java.util.ArrayList;
 
 public class Main extends JavaPlugin {
 
+    private static final int MIN_FLINT_VERSION = 1;
+
     public static final String WAITING_STAGE_ID = "waiting";
     public static final String PREPARING_STAGE_ID = "preparing";
     public static final String PLAYING_STAGE_ID = "playing";
+
+    public static final ChatColor INFO_COLOR = ChatColor.DARK_AQUA;
+    public static final ChatColor ERROR_COLOR = ChatColor.RED;
+    public static final ChatColor EM_COLOR = ChatColor.GOLD;
 
     public static ArrayList<Material> SHOVELS = new ArrayList<>();
     public static ItemStack SHOVEL;
@@ -55,7 +65,7 @@ public class Main extends JavaPlugin {
     private static JavaPlugin plugin;
     private static Minigame mg;
 
-    public int MIN_PLAYERS = Integer.MAX_VALUE;
+    public static int MIN_PLAYERS = Integer.MAX_VALUE;
 
     static {
         SHOVELS.add(Material.WOOD_SPADE);
@@ -67,9 +77,20 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        if (FlintCore.getApiRevision() < MIN_FLINT_VERSION) {
+            getLogger().severe("Flint API revision " + MIN_FLINT_VERSION + " is required for FlintSpleef to run! "
+                    + "Disabling...");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         // general plugin initialization
         plugin = this;
+        saveDefaultConfig();
         Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
+
+        getCommand("fs").setExecutor(new CommandHandler());
 
         MIN_PLAYERS = getConfig().getInt("min-prep-players");
 
@@ -94,6 +115,8 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        CreateArenaCommand.WIZARDS = null;
+        CreateArenaCommand.WIZARD_INFO = null;
         SHOVELS = null;
         SHOVEL = null;
         mg = null;

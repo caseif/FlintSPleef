@@ -28,15 +28,23 @@
  */
 package net.caseif.flint.spleef.listener;
 
-import net.caseif.flint.challenger.Challenger;
+import static net.caseif.flint.spleef.Main.INFO_COLOR;
+import static net.caseif.flint.spleef.Main.MIN_PLAYERS;
+import static net.caseif.flint.spleef.Main.PLAYING_STAGE_ID;
+import static net.caseif.flint.spleef.Main.PREPARING_STAGE_ID;
+import static net.caseif.flint.spleef.Main.WAITING_STAGE_ID;
+
+import net.caseif.flint.round.challenger.Challenger;
 import net.caseif.flint.event.round.RoundChangeLifecycleStageEvent;
 import net.caseif.flint.event.round.RoundTimerTickEvent;
 import net.caseif.flint.event.round.challenger.ChallengerJoinRoundEvent;
 import net.caseif.flint.spleef.Main;
+import net.caseif.flint.util.physical.Location3D;
 
 import com.google.common.eventbus.Subscribe;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.event.Listener;
 
 /**
@@ -48,11 +56,17 @@ public class MinigameListener implements Listener {
 
     @Subscribe
     public void onChallengerJoinRound(ChallengerJoinRoundEvent event) {
+        Main.getPlugin().getLogger().info("" + event.getRound().getChallengers().size());
+        Main.getPlugin().getLogger().info(event.getRound().getLifecycleStage().getId());
+        Main.getPlugin().getLogger().info(MIN_PLAYERS + "");
+        Main.getPlugin().getLogger().info(WAITING_STAGE_ID);
         // check if round is in progress
         if (event.getRound().getLifecycleStage().getId().equals(Main.PLAYING_STAGE_ID)) {
             event.getChallenger().setSpectating(true); // can't just join in the middle of a round
-        } else if (event.getRound().getLifecycleStage().getId().equals(Main.WAITING_STAGE_ID)) {
+        } else if (event.getRound().getLifecycleStage().getId().equals(Main.WAITING_STAGE_ID)
+                && event.getRound().getChallengers().size() >= MIN_PLAYERS) {
             event.getRound().nextLifecycleStage(); // advance to preparation stage
+            Main.getPlugin().getLogger().info("kk");
         }
     }
 
@@ -60,28 +74,49 @@ public class MinigameListener implements Listener {
     public void onRoundChangeLifecycleStage(RoundChangeLifecycleStageEvent event) {
         // check if round is in progress
         if (event.getStageAfter().getId().equals(Main.PLAYING_STAGE_ID)) {
+            event.getRound().broadcast(INFO_COLOR + "The round has started!");
             // iterate challengers
             for (Challenger challenger : event.getRound().getChallengers()) {
                 // give 'em all shovels
                 Bukkit.getPlayer(challenger.getUniqueId()).getInventory().addItem(Main.SHOVEL);
             }
+        } else if (event.getStageAfter().getId().equals(Main.PREPARING_STAGE_ID)) {
+            event.getRound().broadcast(INFO_COLOR + "Round is starting!");
         }
     }
 
     @Subscribe
     public void onRoundTimerTick(RoundTimerTickEvent event) {
+        if (event.getRound().getRemainingTime() % 10 == 0) {
+            if (!event.getRound().getLifecycleStage().getId().equals(WAITING_STAGE_ID)) {
+                event.getRound()
+                        .broadcast("The round will "
+                                + (event.getRound().getLifecycleStage().getId().equals(PREPARING_STAGE_ID)
+                                ? "begin" : "end") + "in " + event.getRound().getRemainingTime() + " seconds!");
+            }
+        }
+
         // iterate the challengers once per round tick
         for (Challenger challenger : event.getRound().getChallengers()) {
             // check whether the challenger is below y=0 (the void)
             if (Bukkit.getPlayer(challenger.getUniqueId()).getLocation().getY() < 0) {
-                challenger.removeFromRound(); // they lost
+                if (event.getRound().getLifecycleStage().getId().equals(PLAYING_STAGE_ID)) {
+                    challenger.removeFromRound(); // they lost
+                } else {
+                    Location3D spawn = event.getRound().getArena().getSpawnPoints().get(0);
+                    World w = Bukkit.getWorld(spawn.getWorld().get());
+                    Bukkit.getPlayer(challenger.getUniqueId())
+                            .teleport(new Location(w, spawn.getX(), spawn.getY(), spawn.getZ()));
+                }
             }
         }
-        if (event.getRound().getChallengers().size() <= 1) {
+
+        if (event.getRound().getLifecycleStage().getId().equals(PLAYING_STAGE_ID)
+                && event.getRound().getChallengers().size() <= 1) {
             if (event.getRound().getChallengers().size() == 1) {
-                Bukkit.broadcastMessage("[FlintSpleef] " + ChatColor.DARK_PURPLE
+                Bukkit.broadcastMessage(INFO_COLOR + "[FlintSpleef] "
                         + event.getRound().getChallengers().toArray(new Challenger[1])[0].getName()
-                        + " has won in arena " + event.getRound().getArena() + "!");
+                        + " has won in arena " + event.getRound().getArena().getName() + "!");
             }
             event.getRound().end();
         }
