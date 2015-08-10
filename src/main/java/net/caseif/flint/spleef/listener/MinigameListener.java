@@ -56,17 +56,12 @@ public class MinigameListener implements Listener {
 
     @Subscribe
     public void onChallengerJoinRound(ChallengerJoinRoundEvent event) {
-        Main.getPlugin().getLogger().info("" + event.getRound().getChallengers().size());
-        Main.getPlugin().getLogger().info(event.getRound().getLifecycleStage().getId());
-        Main.getPlugin().getLogger().info(MIN_PLAYERS + "");
-        Main.getPlugin().getLogger().info(WAITING_STAGE_ID);
         // check if round is in progress
         if (event.getRound().getLifecycleStage().getId().equals(Main.PLAYING_STAGE_ID)) {
             event.getChallenger().setSpectating(true); // can't just join in the middle of a round
         } else if (event.getRound().getLifecycleStage().getId().equals(Main.WAITING_STAGE_ID)
                 && event.getRound().getChallengers().size() >= MIN_PLAYERS) {
             event.getRound().nextLifecycleStage(); // advance to preparation stage
-            Main.getPlugin().getLogger().info("kk");
         }
     }
 
@@ -87,12 +82,12 @@ public class MinigameListener implements Listener {
 
     @Subscribe
     public void onRoundTimerTick(RoundTimerTickEvent event) {
-        if (event.getRound().getRemainingTime() % 10 == 0) {
+        if (event.getRound().getRemainingTime() % 10 == 0 && event.getRound().getRemainingTime() > 0) {
             if (!event.getRound().getLifecycleStage().getId().equals(WAITING_STAGE_ID)) {
                 event.getRound()
-                        .broadcast("The round will "
+                        .broadcast(INFO_COLOR + "[FlintSpleef] The round will "
                                 + (event.getRound().getLifecycleStage().getId().equals(PREPARING_STAGE_ID)
-                                ? "begin" : "end") + "in " + event.getRound().getRemainingTime() + " seconds!");
+                                ? "begin" : "end") + " in " + event.getRound().getRemainingTime() + " seconds!");
             }
         }
 
