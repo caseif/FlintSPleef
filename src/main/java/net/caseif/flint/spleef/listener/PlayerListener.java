@@ -90,7 +90,8 @@ public class PlayerListener implements Listener {
                     WIZARD_INFO.get(event.getPlayer().getUniqueId())[WIZARD_NAME] = event.getMessage();
                     event.getPlayer().sendMessage(INFO_COLOR + "[FlintSpleef] Okay! Your arena will be given display "
                             + "name " + EM_COLOR + event.getMessage() + INFO_COLOR + ". Next, please click the block "
-                            + "you would like to use as the first corner of the arena's boundary.");
+                            + "you would like to use as the first corner of the arena's boundary (the region will "
+                            + "encompass all y-values).");
                     break;
                 case WIZARD_SPAWN_POINT:
                     if (event.getMessage().equalsIgnoreCase("ok")) {
@@ -136,11 +137,11 @@ public class PlayerListener implements Listener {
                     case WIZARD_FIRST_BOUND:
                         increment(event.getPlayer());
                         WIZARD_INFO.get(event.getPlayer().getUniqueId())[WIZARD_FIRST_BOUND]
-                                = new Location3D(c.getWorld().getName(), c.getX(), c.getY(), c.getZ());
+                                = new Location3D(c.getWorld().getName(), c.getX(), 0, c.getZ());
                         event.getPlayer().sendMessage(INFO_COLOR + "[FlintSpleef] Okay! The first boundary corner "
-                                + "will be at " + EM_COLOR + "(" + c.getX() + ", " + c.getY() + ", " + c.getZ() + ")"
-                                + INFO_COLOR + ". Next, please click the block you would like to use as the second "
-                                + "corner of the arena's boundary.");
+                                + "will be at " + EM_COLOR + "(x=" + c.getX() + ", z=" + c.getZ() + ")" + INFO_COLOR
+                                + ". Next, please click the block you would like to use as the second corner of the "
+                                + "arena's boundary.");
                         break;
                     case WIZARD_SECOND_BOUND:
                         if (c.getWorld().getName().equals(
@@ -149,11 +150,12 @@ public class PlayerListener implements Listener {
                         )) {
                             increment(event.getPlayer());
                             WIZARD_INFO.get(event.getPlayer().getUniqueId())[WIZARD_SECOND_BOUND]
-                                    = new Location3D(c.getWorld().getName(), c.getX(), c.getY(), c.getZ());
+                                    = new Location3D(c.getWorld().getName(), c.getX(), c.getWorld().getMaxHeight(),
+                                    c.getZ());
                             event.getPlayer().sendMessage(INFO_COLOR + "[FlintSpleef] Okay! The second boundary corner "
-                                    + "will be at " + EM_COLOR + "(" + c.getX() + ", " + c.getY() + ", " + c.getZ()
-                                    + ")" + INFO_COLOR + ". Next, please stand at the location you wish to use at the "
-                                    + "spawn point for the arena and type " + EM_COLOR + "OK" + INFO_COLOR + ".");
+                                    + "will be at " + EM_COLOR + "(x=" + c.getX() + ", z=" + c.getZ() + ")" + INFO_COLOR
+                                    + ". Next, please stand at the location you wish to use at the spawn point for the "
+                                    + "arena and type " + EM_COLOR + "OK" + INFO_COLOR + ".");
                         } else {
                             event.getPlayer().sendMessage(ERROR_COLOR + "[FlintSpleef] The second boundary corner must "
                                     + "be in the same world as the first");
