@@ -34,52 +34,50 @@ import static net.caseif.flint.spleef.Main.INFO_COLOR;
 import static net.caseif.flint.spleef.Main.PREFIX;
 
 import net.caseif.flint.arena.Arena;
-import net.caseif.flint.exception.round.RoundJoinException;
-import net.caseif.flint.round.Round;
 import net.caseif.flint.spleef.Main;
 
 import com.google.common.base.Optional;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Handler for the arena join command.
+ * Handler for the remove arena command.
  *
  * @author Max Roncacé
  */
-public class JoinArenaCommand {
+public class RemoveArenaCommand {
+
+    private static final List<String> warned = new ArrayList<>();
 
     public static void handle(CommandSender sender, String[] args) {
-        if (sender.hasPermission("fs.play")) {
-            if (sender instanceof Player) {
-                if (args.length > 1) {
-                    String arenaName = args[1];
-                    Optional<Arena> arena = Main.getMinigame().getArena(arenaName);
-                    if (arena.isPresent()) {
-                        Round round = arena.get().getRound().orNull();
-                        if (round == null) {
-                            round = arena.get().createRound();
+        if (sender.hasPermission("fs.arena.remove")) {
+            if (args.length > 2) {
+                Optional<Arena> arena = Main.getMinigame().getArena(args[2]);
+                if (arena.isPresent()) {
+                    if (!arena.get().getRound().isPresent() || warned.contains(sender.getName())) {
+                        if (arena.get().getRound().isPresent()) {
+                            sender.sendMessage(PREFIX + INFO_COLOR + "Ending round first...");
+                            arena.get().getRound().get().end();
                         }
-                        if (!round.getLifecycleStage().getId().equals(Main.PLAYING_STAGE_ID)) {
-                            try {
-                                round.addChallenger(((Player) sender).getUniqueId());
-                                sender.sendMessage(PREFIX + INFO_COLOR + "Successfully joined arena "
-                                        + EM_COLOR + arena.get().getName());
-                            } catch (RoundJoinException ex) {
-                                sender.sendMessage(PREFIX + ERROR_COLOR + "Failed to join: " + ex.getMessage());
-                            }
-                        } else {
-                            sender.sendMessage(PREFIX + ERROR_COLOR + "You may not join a round in progress");
-                        }
+                        warned.remove(sender.getName());
+                        Main.getMinigame().removeArena(arena.get());
+                        sender.sendMessage(PREFIX + INFO_COLOR + "Successfully removed arena " + EM_COLOR
+                                + arena.get().getName() + INFO_COLOR + " (ID: " + EM_COLOR + arena.get().getId()
+                                + INFO_COLOR + ")");
                     } else {
-                        sender.sendMessage(PREFIX + ERROR_COLOR + "No arena by ID " + EM_COLOR + arenaName
-                                + ERROR_COLOR + " exists");
+                        sender.sendMessage(PREFIX + ERROR_COLOR + "Arena " + EM_COLOR + arena.get().getName()
+                                + ERROR_COLOR + " contains an active round. If you still wish to remove it, run the "
+                                + "command again and the round will be ended and the arena removed.");
+                        warned.add(sender.getName());
                     }
                 } else {
-                    sender.sendMessage(PREFIX + ERROR_COLOR + "Too few arguments! Usage: /fs join [arena]");
+                    sender.sendMessage(PREFIX + ERROR_COLOR + "Arena with ID " + EM_COLOR + args[2] + ERROR_COLOR
+                            + " does not exist");
                 }
             } else {
-                sender.sendMessage(PREFIX + ERROR_COLOR + "You must be an in-game player to use this command");
+                sender.sendMessage(PREFIX + ERROR_COLOR + "Too few arguments! Usage: /fs arena remove [arena]");
             }
         } else {
             sender.sendMessage(PREFIX + ERROR_COLOR + "You do not have permission to use this command");

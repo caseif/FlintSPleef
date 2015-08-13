@@ -55,6 +55,7 @@ public class Main extends JavaPlugin {
     public static final String PREPARING_STAGE_ID = "preparing";
     public static final String PLAYING_STAGE_ID = "playing";
 
+    public static final String PREFIX = ChatColor.GREEN + "[FlintSpleef] ";
     public static final ChatColor INFO_COLOR = ChatColor.DARK_AQUA;
     public static final ChatColor ERROR_COLOR = ChatColor.RED;
     public static final ChatColor EM_COLOR = ChatColor.GOLD;
@@ -78,8 +79,8 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         if (FlintCore.getApiRevision() < MIN_FLINT_VERSION) {
-            getLogger().severe("Flint API revision " + MIN_FLINT_VERSION + " is required for FlintSpleef to run! "
-                    + "Disabling...");
+            getLogger().severe("Flint API revision " + MIN_FLINT_VERSION
+                    + " or greater is required for FlintSpleef to run! Disabling...");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }

@@ -23,11 +23,11 @@ permissions:
     default: op
     children:
       fs.arena.create: true
-      fs.arena.destroy: true
+      fs.arena.remove: true
   fs.arena.create:
     description: Grants permission to create arenas.
     default: op
-  fs.arena.destroy:
+  fs.arena.remove:
     description: Grants permission to destroy arenas.
     default: op
   fs.play:

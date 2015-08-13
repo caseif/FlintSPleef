@@ -29,6 +29,7 @@
 package net.caseif.flint.spleef.command;
 
 import static net.caseif.flint.spleef.Main.ERROR_COLOR;
+import static net.caseif.flint.spleef.Main.PREFIX;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -48,19 +49,23 @@ public class CommandHandler implements CommandExecutor {
                 if (args.length > 1) {
                     if (args[1].equalsIgnoreCase("create")) {
                         CreateArenaCommand.handle(sender,  args);
+                    } else if (args[1].equalsIgnoreCase("remove")) {
+                        RemoveArenaCommand.handle(sender, args);
                     } else {
-                        sender.sendMessage(ERROR_COLOR + "Invalid arguments! Usage: /ts arena [command]");
+                        sender.sendMessage(PREFIX + ERROR_COLOR + "Invalid arguments! Usage: /ts arena [command]");
                     }
                 } else {
-                    sender.sendMessage(ERROR_COLOR + "Too few arguments! Usage: /fs arena [command]");
+                    sender.sendMessage(PREFIX + ERROR_COLOR + "Too few arguments! Usage: /fs arena [command]");
                 }
             } else if (args[0].equalsIgnoreCase("join")) {
                 JoinArenaCommand.handle(sender, args);
+            } else if (args[0].equalsIgnoreCase("leave")) {
+                LeaveArenaCommand.handle(sender, args);
             } else {
-                sender.sendMessage(ERROR_COLOR + "Invalid arguments! Usage: /fs [command]");
+                sender.sendMessage(PREFIX + ERROR_COLOR + "Invalid arguments! Usage: /fs [command]");
             }
         } else {
-            sender.sendMessage(ERROR_COLOR + "Too few arguments! Usage: /fs [command]");
+            sender.sendMessage(PREFIX + ERROR_COLOR + "Too few arguments! Usage: /fs [command]");
         }
         return true;
     }

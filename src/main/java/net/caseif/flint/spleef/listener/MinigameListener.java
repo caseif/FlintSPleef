@@ -28,16 +28,18 @@
  */
 package net.caseif.flint.spleef.listener;
 
+import static net.caseif.flint.spleef.Main.EM_COLOR;
 import static net.caseif.flint.spleef.Main.INFO_COLOR;
 import static net.caseif.flint.spleef.Main.MIN_PLAYERS;
 import static net.caseif.flint.spleef.Main.PLAYING_STAGE_ID;
+import static net.caseif.flint.spleef.Main.PREFIX;
 import static net.caseif.flint.spleef.Main.PREPARING_STAGE_ID;
 import static net.caseif.flint.spleef.Main.WAITING_STAGE_ID;
 
-import net.caseif.flint.round.challenger.Challenger;
 import net.caseif.flint.event.round.RoundChangeLifecycleStageEvent;
 import net.caseif.flint.event.round.RoundTimerTickEvent;
 import net.caseif.flint.event.round.challenger.ChallengerJoinRoundEvent;
+import net.caseif.flint.round.challenger.Challenger;
 import net.caseif.flint.spleef.Main;
 import net.caseif.flint.util.physical.Location3D;
 
@@ -69,14 +71,14 @@ public class MinigameListener implements Listener {
     public void onRoundChangeLifecycleStage(RoundChangeLifecycleStageEvent event) {
         // check if round is in progress
         if (event.getStageAfter().getId().equals(Main.PLAYING_STAGE_ID)) {
-            event.getRound().broadcast(INFO_COLOR + "The round has started!");
+            event.getRound().broadcast(PREFIX + INFO_COLOR + "The round has started!");
             // iterate challengers
             for (Challenger challenger : event.getRound().getChallengers()) {
                 // give 'em all shovels
                 Bukkit.getPlayer(challenger.getUniqueId()).getInventory().addItem(Main.SHOVEL);
             }
         } else if (event.getStageAfter().getId().equals(Main.PREPARING_STAGE_ID)) {
-            event.getRound().broadcast(INFO_COLOR + "Round is starting!");
+            event.getRound().broadcast(PREFIX + INFO_COLOR + "Round is starting!");
         }
     }
 
@@ -85,7 +87,7 @@ public class MinigameListener implements Listener {
         if (event.getRound().getRemainingTime() % 10 == 0 && event.getRound().getRemainingTime() > 0) {
             if (!event.getRound().getLifecycleStage().getId().equals(WAITING_STAGE_ID)) {
                 event.getRound()
-                        .broadcast(INFO_COLOR + "[FlintSpleef] The round will "
+                        .broadcast(PREFIX + INFO_COLOR + "The round will "
                                 + (event.getRound().getLifecycleStage().getId().equals(PREPARING_STAGE_ID)
                                 ? "begin" : "end") + " in " + event.getRound().getRemainingTime() + " seconds!");
             }
@@ -109,9 +111,9 @@ public class MinigameListener implements Listener {
         if (event.getRound().getLifecycleStage().getId().equals(PLAYING_STAGE_ID)
                 && event.getRound().getChallengers().size() <= 1) {
             if (event.getRound().getChallengers().size() == 1) {
-                Bukkit.broadcastMessage(INFO_COLOR + "[FlintSpleef] "
+                Bukkit.broadcastMessage(PREFIX + INFO_COLOR
                         + event.getRound().getChallengers().toArray(new Challenger[1])[0].getName()
-                        + " has won in arena " + event.getRound().getArena().getName() + "!");
+                        + " has won in arena " + EM_COLOR + event.getRound().getArena().getName() + INFO_COLOR + "!");
             }
             event.getRound().end();
         }

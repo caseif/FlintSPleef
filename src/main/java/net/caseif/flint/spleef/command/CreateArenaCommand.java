@@ -31,6 +31,7 @@ package net.caseif.flint.spleef.command;
 import static net.caseif.flint.spleef.Main.EM_COLOR;
 import static net.caseif.flint.spleef.Main.ERROR_COLOR;
 import static net.caseif.flint.spleef.Main.INFO_COLOR;
+import static net.caseif.flint.spleef.Main.PREFIX;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -61,18 +62,18 @@ public class CreateArenaCommand {
                 if (!WIZARDS.containsKey(((Player) sender).getUniqueId())) {
                     WIZARDS.put(((Player) sender).getUniqueId(), 0);
                     WIZARD_INFO.put(((Player) sender).getUniqueId(), new Object[4]);
-                    sender.sendMessage(INFO_COLOR + "[FlintSpleef] Welcome to the arena creation wizard! To start, "
-                            + "please enter the ID for the new arena.");
-                    sender.sendMessage(INFO_COLOR + "[FlintSpleef] Note: You may exit this wizard at any time by "
-                            + "sending " + EM_COLOR + "cancel" + INFO_COLOR + " in the chat.");
+                    sender.sendMessage(PREFIX + INFO_COLOR + "Welcome to the arena creation wizard! To start, please "
+                            + "enter the ID for the new arena.");
+                    sender.sendMessage(PREFIX + INFO_COLOR + "Note: You may exit this wizard at any time by sending "
+                            + EM_COLOR + "cancel" + INFO_COLOR + " in the chat.");
                 } else {
-                    sender.sendMessage(ERROR_COLOR + "[FlintSpleef] You are already in the arena creation wizard");
+                    sender.sendMessage(PREFIX + ERROR_COLOR + "You are already in the arena creation wizard");
                 }
             } else {
-                sender.sendMessage(ERROR_COLOR + "[FlintSpleef] You must be an in-game player to use this command");
+                sender.sendMessage(PREFIX + ERROR_COLOR + "You must be an in-game player to use this command");
             }
         } else {
-            sender.sendMessage(ERROR_COLOR + "[FlintSpleef] You do not have permission to use this command");
+            sender.sendMessage(PREFIX + ERROR_COLOR + "[FlintSpleef] You do not have permission to use this command");
         }
     }
 
