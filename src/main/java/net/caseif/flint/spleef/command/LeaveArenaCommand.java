@@ -31,7 +31,7 @@ package net.caseif.flint.spleef.command;
 import static net.caseif.flint.spleef.Main.ERROR_COLOR;
 import static net.caseif.flint.spleef.Main.PREFIX;
 
-import net.caseif.flint.round.challenger.Challenger;
+import net.caseif.flint.challenger.Challenger;
 import net.caseif.flint.spleef.Main;
 
 import com.google.common.base.Optional;
