@@ -62,10 +62,11 @@ public class RemoveArenaCommand {
                             arena.get().getRound().get().end();
                         }
                         warned.remove(sender.getName());
+                        String id = arena.get().getId();
+                        String name = arena.get().getName();
                         Main.getMinigame().removeArena(arena.get());
                         sender.sendMessage(PREFIX + INFO_COLOR + "Successfully removed arena " + EM_COLOR
-                                + arena.get().getName() + INFO_COLOR + " (ID: " + EM_COLOR + arena.get().getId()
-                                + INFO_COLOR + ")");
+                                + name + INFO_COLOR + " (ID: " + EM_COLOR + id + INFO_COLOR + ")");
                     } else {
                         sender.sendMessage(PREFIX + ERROR_COLOR + "Arena " + EM_COLOR + arena.get().getName()
                                 + ERROR_COLOR + " contains an active round. If you still wish to remove it, run the "

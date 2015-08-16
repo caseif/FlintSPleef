@@ -36,10 +36,10 @@ import static net.caseif.flint.spleef.Main.PREFIX;
 import static net.caseif.flint.spleef.Main.PREPARING_STAGE_ID;
 import static net.caseif.flint.spleef.Main.WAITING_STAGE_ID;
 
+import net.caseif.flint.challenger.Challenger;
 import net.caseif.flint.event.round.RoundChangeLifecycleStageEvent;
 import net.caseif.flint.event.round.RoundTimerTickEvent;
 import net.caseif.flint.event.round.challenger.ChallengerJoinRoundEvent;
-import net.caseif.flint.challenger.Challenger;
 import net.caseif.flint.spleef.Main;
 import net.caseif.flint.util.physical.Location3D;
 

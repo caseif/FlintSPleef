@@ -51,6 +51,7 @@ configurations {
 
 // Project repositories
 repositories {
+    mavenLocal()
     mavenCentral()
     maven { url 'http://repo.caseif.net/content/groups/public/' }
     maven { url 'http://hub.spigotmc.org/nexus/content/groups/public/' }
