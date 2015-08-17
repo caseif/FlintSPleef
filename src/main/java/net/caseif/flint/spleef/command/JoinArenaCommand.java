@@ -50,7 +50,7 @@ import org.bukkit.entity.Player;
 public class JoinArenaCommand {
 
     public static void handle(CommandSender sender, String[] args) {
-        if (sender.hasPermission("fs.play")) {
+        if (sender.hasPermission("flintspleef.play")) {
             if (sender instanceof Player) {
                 if (args.length > 1) {
                     String arenaName = args[1];

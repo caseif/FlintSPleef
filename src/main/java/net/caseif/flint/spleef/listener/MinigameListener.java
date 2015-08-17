@@ -37,10 +37,12 @@ import static net.caseif.flint.spleef.Main.PREPARING_STAGE_ID;
 import static net.caseif.flint.spleef.Main.WAITING_STAGE_ID;
 
 import net.caseif.flint.challenger.Challenger;
+import net.caseif.flint.event.lobby.PlayerClickLobbySignEvent;
 import net.caseif.flint.event.round.RoundChangeLifecycleStageEvent;
 import net.caseif.flint.event.round.RoundTimerTickEvent;
 import net.caseif.flint.event.round.challenger.ChallengerJoinRoundEvent;
 import net.caseif.flint.spleef.Main;
+import net.caseif.flint.spleef.command.JoinArenaCommand;
 import net.caseif.flint.util.physical.Location3D;
 
 import com.google.common.eventbus.Subscribe;
@@ -108,14 +110,29 @@ public class MinigameListener implements Listener {
             }
         }
 
-        if (event.getRound().getLifecycleStage().getId().equals(PLAYING_STAGE_ID)
-                && event.getRound().getChallengers().size() <= 1) {
-            if (event.getRound().getChallengers().size() == 1) {
-                Bukkit.broadcastMessage(PREFIX + INFO_COLOR
-                        + event.getRound().getChallengers().toArray(new Challenger[1])[0].getName()
-                        + " has won in arena " + EM_COLOR + event.getRound().getArena().getName() + INFO_COLOR + "!");
+        if (event.getRound().getChallengers().size() <= 1) {
+            if (event.getRound().getLifecycleStage().getId().equals(PLAYING_STAGE_ID)) {
+                if (event.getRound().getChallengers().size() == 1) {
+                    Bukkit.broadcastMessage(PREFIX + INFO_COLOR
+                            + event.getRound().getChallengers().toArray(new Challenger[1])[0].getName()
+                            + " has won in arena " + EM_COLOR + event.getRound().getArena().getName() + INFO_COLOR
+                            + "!");
+                    event.getRound().end();
+                } else if (event.getRound().getChallengers().isEmpty()) {
+                    event.getRound().end();
+                }
+            } else if (event.getRound().getLifecycleStage().getId().equals(PREPARING_STAGE_ID)) {
+                event.getRound().setLifecycleStage(event.getRound().getLifecycleStage(WAITING_STAGE_ID).get());
             }
-            event.getRound().end();
+        }
+    }
+
+    @Subscribe
+    public void onPlayerClickLobbySign(PlayerClickLobbySignEvent event) {
+        if (Bukkit.getPlayer(event.getPlayer()).hasPermission("flintspleef.play")) {
+            // simulate a join command because I'm a lazy bastard
+            JoinArenaCommand.handle(Bukkit.getPlayer(event.getPlayer()),
+                    new String[]{"join", event.getLobbySign().getArena().getId()});
         }
     }
 

@@ -57,7 +57,7 @@ public class CreateArenaCommand {
     public static final int WIZARD_SPAWN_POINT = 4;
 
     public static void handle(CommandSender sender, String[] args) {
-        if (sender.hasPermission("fs.arena.create")) {
+        if (sender.hasPermission("flintspleef.arena.create")) {
             if (sender instanceof Player) {
                 if (!WIZARDS.containsKey(((Player) sender).getUniqueId())) {
                     WIZARDS.put(((Player) sender).getUniqueId(), 0);

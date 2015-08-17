@@ -52,7 +52,7 @@ public class RemoveArenaCommand {
     private static final List<String> warned = new ArrayList<>();
 
     public static void handle(CommandSender sender, String[] args) {
-        if (sender.hasPermission("fs.arena.remove")) {
+        if (sender.hasPermission("flintspleef.arena.remove")) {
             if (args.length > 2) {
                 Optional<Arena> arena = Main.getMinigame().getArena(args[2]);
                 if (arena.isPresent()) {

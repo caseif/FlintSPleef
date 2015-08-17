@@ -12,24 +12,37 @@ commands:
     usage: /fs [command]
 
 permissions:
-  fs.*:
+  flintspleef.*:
     description: Grants full control of the plugin.
     default: op
     children:
-      fs.arena.*: true
-      fs.play: true
-  fs.arena.*:
+      flintspleef.arena.*: true
+      flintspleef.play: true
+      flintspleef.lobby.*: true
+  flintspleef.arena.*:
     description: Grants full control of arenas.
     default: op
     children:
-      fs.arena.create: true
-      fs.arena.remove: true
-  fs.arena.create:
+      flintspleef.arena.create: true
+      flintspleef.arena.remove: true
+  flintspleef.arena.create:
     description: Grants permission to create arenas.
     default: op
-  fs.arena.remove:
+  flintspleef.arena.remove:
     description: Grants permission to destroy arenas.
     default: op
-  fs.play:
+  flintspleef.play:
     description: Grants permission to play FlintSpleef.
     default: true
+  flintspleef.lobby.*:
+    description: Grants all lobby sign permissions.
+    default: op
+    children:
+      flintspleef.lobby.create: true
+      flintspleef.lobby.destroy: true
+  flintspleef.lobby.create:
+    description: Grants permission to create lobby signs.
+    default: op
+  flintspleef.lobby.destroy:
+    description: Grants permissiont o destroy lobby signs.
+    default: op
