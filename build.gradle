@@ -15,11 +15,12 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'checkstyle'
+    id 'com.github.johnrengelman.shadow' version '1.2.0'
 }
 
 apply plugin: 'license'
 
-defaultTasks 'clean', 'licenseFormat', 'build'
+defaultTasks 'clean', 'licenseFormat', 'build', 'shadowJar'
 
 // Project information
 group = 'net.caseif.flint.spleef'
@@ -46,8 +47,12 @@ targetCompatibility = 1.7
 
 configurations {
     deployerJars
-}
 
+    shadow
+    compile {
+        extendsFrom shadow
+    }
+}
 
 // Project repositories
 repositories {
@@ -61,6 +66,7 @@ repositories {
 dependencies {
 	compile 'net.caseif.flint:flint:1.0-SNAPSHOT'
     compile 'org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT'
+    shadow 'net.caseif.rosetta:rosetta:1.0.0-SNAPSHOT'
 }
 
 tasks.withType(JavaCompile) {
@@ -107,6 +113,14 @@ jar.manifest.mainAttributes(
         'Implementation-Vendor': author
 )
 
+shadowJar {
+    configurations = [project.configurations.shadow]
+    dependencies {
+        include dependency('net.caseif.rosetta:rosetta')
+    }
+    classifier = ''
+}
+
 task sourceJar(type: Jar) {
     from sourceSets.main.java
     from sourceSets.main.resources
@@ -114,6 +128,6 @@ task sourceJar(type: Jar) {
 }
 
 artifacts {
-    archives jar
+    archives shadowJar
     archives sourceJar
 }
