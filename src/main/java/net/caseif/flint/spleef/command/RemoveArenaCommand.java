@@ -31,6 +31,7 @@ package net.caseif.flint.spleef.command;
 import static net.caseif.flint.spleef.Main.EM_COLOR;
 import static net.caseif.flint.spleef.Main.ERROR_COLOR;
 import static net.caseif.flint.spleef.Main.INFO_COLOR;
+import static net.caseif.flint.spleef.Main.LOCALE_MANAGER;
 import static net.caseif.flint.spleef.Main.PREFIX;
 
 import net.caseif.flint.arena.Arena;
@@ -58,19 +59,21 @@ public class RemoveArenaCommand {
                 if (arena.isPresent()) {
                     if (!arena.get().getRound().isPresent() || warned.contains(sender.getName())) {
                         if (arena.get().getRound().isPresent()) {
-                            sender.sendMessage(PREFIX + INFO_COLOR + "Ending round first...");
+                            LOCALE_MANAGER.getLocalizable("message.info.command.remove.round-end")
+                                    .withPrefix(PREFIX + INFO_COLOR).sendTo(sender);
                             arena.get().getRound().get().end();
                         }
                         warned.remove(sender.getName());
                         String id = arena.get().getId();
                         String name = arena.get().getName();
                         Main.getMinigame().removeArena(arena.get());
-                        sender.sendMessage(PREFIX + INFO_COLOR + "Successfully removed arena " + EM_COLOR
-                                + name + INFO_COLOR + " (ID: " + EM_COLOR + id + INFO_COLOR + ")");
+                        LOCALE_MANAGER.getLocalizable("message.info.command.remove.success")
+                                .withPrefix(PREFIX + INFO_COLOR).withReplacements(EM_COLOR + name + INFO_COLOR,
+                                EM_COLOR + id + INFO_COLOR).sendTo(sender);
                     } else {
-                        sender.sendMessage(PREFIX + ERROR_COLOR + "Arena " + EM_COLOR + arena.get().getName()
-                                + ERROR_COLOR + " contains an active round. If you still wish to remove it, run the "
-                                + "command again and the round will be ended and the arena removed.");
+                        LOCALE_MANAGER.getLocalizable("message.info.command.remove.contains-round")
+                                .withPrefix(PREFIX + ERROR_COLOR).withReplacements(EM_COLOR + arena.get().getName()
+                                + INFO_COLOR).sendTo(sender);
                         warned.add(sender.getName());
                     }
                 } else {
@@ -78,10 +81,14 @@ public class RemoveArenaCommand {
                             + " does not exist");
                 }
             } else {
-                sender.sendMessage(PREFIX + ERROR_COLOR + "Too few arguments! Usage: /fs arena remove [arena]");
+                String msg = PREFIX + ERROR_COLOR + LOCALE_MANAGER.getLocalizable("message.error.general.too-few-args")
+                        .localizeFor(sender) + LOCALE_MANAGER.getLocalizable("message.error.general.usage")
+                        .withReplacements("/fs arena remove [arena]").localizeFor(sender);
+                sender.sendMessage(msg);
             }
         } else {
-            sender.sendMessage(PREFIX + ERROR_COLOR + "You do not have permission to use this command");
+            LOCALE_MANAGER.getLocalizable("message.error.general.permission").withPrefix(PREFIX + ERROR_COLOR)
+                    .sendTo(sender);
         }
     }
 

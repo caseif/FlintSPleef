@@ -31,6 +31,7 @@ package net.caseif.flint.spleef.listener;
 import static net.caseif.flint.spleef.Main.EM_COLOR;
 import static net.caseif.flint.spleef.Main.ERROR_COLOR;
 import static net.caseif.flint.spleef.Main.INFO_COLOR;
+import static net.caseif.flint.spleef.Main.LOCALE_MANAGER;
 import static net.caseif.flint.spleef.Main.PREFIX;
 import static net.caseif.flint.spleef.command.CreateArenaCommand.WIZARDS;
 import static net.caseif.flint.spleef.command.CreateArenaCommand.WIZARD_FIRST_BOUND;
@@ -67,10 +68,12 @@ public class PlayerListener implements Listener {
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
         if (WIZARDS.containsKey(event.getPlayer().getUniqueId())) {
             int stage = WIZARDS.get(event.getPlayer().getUniqueId());
-            if (event.getMessage().equalsIgnoreCase("cancel")) {
+            if (event.getMessage().equalsIgnoreCase(LOCALE_MANAGER
+                    .getLocalizable("message.info.command.create.cancel-keyword")
+                    .localizeFor(event.getPlayer()))) {
                 event.setCancelled(true);
-                event.getPlayer().sendMessage(PREFIX + ERROR_COLOR
-                        + "Arena creation cancelled.");
+                LOCALE_MANAGER.getLocalizable("message.info.command.create.cancelled").withPrefix(PREFIX + ERROR_COLOR)
+                        .sendTo(event.getPlayer());
                 return;
             }
             event.setCancelled(true);
@@ -79,24 +82,24 @@ public class PlayerListener implements Listener {
                     increment(event.getPlayer());
                     if (!Main.getMinigame().getArena(event.getMessage()).isPresent()) {
                         WIZARD_INFO.get(event.getPlayer().getUniqueId())[WIZARD_ID] = event.getMessage();
-                        event.getPlayer().sendMessage(PREFIX + INFO_COLOR + "Okay! Your arena will be created with ID "
-                                + EM_COLOR + event.getMessage().toLowerCase()
-                                + INFO_COLOR + ". Next, please enter the display name for the new arena.");
+                        LOCALE_MANAGER.getLocalizable("message.info.command.create.id").withPrefix(PREFIX + INFO_COLOR)
+                                .withReplacements(EM_COLOR + event.getMessage().toLowerCase() + INFO_COLOR)
+                                .sendTo(event.getPlayer());
                     } else {
-                        event.getPlayer().sendMessage(PREFIX + ERROR_COLOR + "An arena with that ID already exists! "
-                                + "Please enter a different ID for the new arena.");
+                        LOCALE_MANAGER.getLocalizable("message.error.command.create.bad-id")
+                                .withPrefix(PREFIX + ERROR_COLOR).sendTo(event.getPlayer());
                     }
                     break;
                 case WIZARD_NAME:
                     increment(event.getPlayer());
                     WIZARD_INFO.get(event.getPlayer().getUniqueId())[WIZARD_NAME] = event.getMessage();
-                    event.getPlayer().sendMessage(PREFIX + INFO_COLOR + "Okay! Your arena will be given display name "
-                            + EM_COLOR + event.getMessage() + INFO_COLOR + ". Next, please click the block you would "
-                            + "like to use as the first corner of the arena's boundary (the region will encompass all "
-                            + "y-values).");
+                    LOCALE_MANAGER.getLocalizable("message.info.command.create.name").withPrefix(PREFIX + INFO_COLOR)
+                            .withReplacements(EM_COLOR + event.getMessage() + INFO_COLOR).sendTo(event.getPlayer());
                     break;
                 case WIZARD_SPAWN_POINT:
-                    if (event.getMessage().equalsIgnoreCase("ok")) {
+                    if (event.getMessage().equalsIgnoreCase(
+                            LOCALE_MANAGER.getLocalizable("message.info.command.create.ok-keyword")
+                                    .localizeFor(event.getPlayer()))) {
                         if (event.getPlayer().getWorld().getName().equals(
                                 ((Location3D) WIZARD_INFO.get(event.getPlayer().getUniqueId())[WIZARD_FIRST_BOUND])
                                         .getWorld().get()
@@ -109,14 +112,15 @@ public class PlayerListener implements Listener {
                             Main.getMinigame().createArena((String) info[WIZARD_ID], (String) info[WIZARD_NAME],
                                     spawn, new Boundary((Location3D) info[WIZARD_FIRST_BOUND],
                                             (Location3D) info[WIZARD_SECOND_BOUND]));
-                            event.getPlayer().sendMessage(PREFIX + INFO_COLOR
-                                    + "The arena was successfully created! You may join it by typing " + EM_COLOR
-                                    + "/fs join " + ((String) info[WIZARD_ID]).toLowerCase() + INFO_COLOR + ".");
+                            LOCALE_MANAGER.getLocalizable("message.info.command.create.success")
+                                    .withPrefix(PREFIX + INFO_COLOR).withReplacements(EM_COLOR + "/fs join "
+                                    + ((String) info[WIZARD_ID]).toLowerCase() + INFO_COLOR).
+                                    sendTo(event.getPlayer());
                             WIZARDS.remove(event.getPlayer().getUniqueId());
                             WIZARD_INFO.remove(event.getPlayer().getUniqueId());
                         } else {
-                            event.getPlayer().sendMessage(PREFIX + ERROR_COLOR
-                                    + "The spawn point must be in the same world as the boundary");
+                            LOCALE_MANAGER.getLocalizable("message.error.command.create.bad-spawn")
+                                    .withPrefix(PREFIX + ERROR_COLOR).sendTo(event.getPlayer());
                         }
                         break;
                     }
@@ -140,10 +144,10 @@ public class PlayerListener implements Listener {
                         increment(event.getPlayer());
                         WIZARD_INFO.get(event.getPlayer().getUniqueId())[WIZARD_FIRST_BOUND]
                                 = new Location3D(c.getWorld().getName(), c.getX(), 0, c.getZ());
-                        event.getPlayer().sendMessage(PREFIX + INFO_COLOR
-                                + "Okay! The first boundary corner will be at " + EM_COLOR + "(x=" + c.getX() + ", z="
-                                + c.getZ() + ")" + INFO_COLOR + ". Next, please click the block you would like to use "
-                                + "as the second corner of the arena's boundary.");
+                        LOCALE_MANAGER.getLocalizable("message.info.command.create.bound-1")
+                                .withPrefix(PREFIX + INFO_COLOR)
+                                .withReplacements(EM_COLOR + "(x=" + c.getX() + ", z=" + c.getZ() + ")" + INFO_COLOR)
+                                .sendTo(event.getPlayer());
                         break;
                     case WIZARD_SECOND_BOUND:
                         if (c.getWorld().getName().equals(
@@ -154,14 +158,16 @@ public class PlayerListener implements Listener {
                             WIZARD_INFO.get(event.getPlayer().getUniqueId())[WIZARD_SECOND_BOUND]
                                     = new Location3D(c.getWorld().getName(), c.getX(), c.getWorld().getMaxHeight(),
                                     c.getZ());
-                            event.getPlayer().sendMessage(PREFIX + INFO_COLOR
-                                    + "Okay! The second boundary corner will be at " + EM_COLOR + "(x=" + c.getX()
-                                    + ", z=" + c.getZ() + ")" + INFO_COLOR + ". Next, please stand at the location you "
-                                    + "wish to use at the spawn point for the arena and type " + EM_COLOR + "OK"
-                                    + INFO_COLOR + ".");
+                            LOCALE_MANAGER.getLocalizable("message.info.command.create.bound-2")
+                                    .withPrefix(PREFIX + INFO_COLOR)
+                                    .withReplacements(EM_COLOR + "(x=" + c.getX() + ", z=" + c.getZ() + ")"
+                                            + INFO_COLOR, EM_COLOR
+                                            + LOCALE_MANAGER.getLocalizable("message.info.command.create.ok-keyword")
+                                            .localizeFor(event.getPlayer()) + INFO_COLOR)
+                                    .sendTo(event.getPlayer());
                         } else {
-                            event.getPlayer().sendMessage(PREFIX + ERROR_COLOR
-                                    + "The second boundary corner must be in the same world as the first");
+                            LOCALE_MANAGER.getLocalizable("message.error.command.create.bad-bound")
+                                    .withPrefix(PREFIX + ERROR_COLOR).sendTo(event.getPlayer());
                         }
                         break;
                     default:

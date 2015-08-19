@@ -31,6 +31,7 @@ package net.caseif.flint.spleef.command;
 import static net.caseif.flint.spleef.Main.EM_COLOR;
 import static net.caseif.flint.spleef.Main.ERROR_COLOR;
 import static net.caseif.flint.spleef.Main.INFO_COLOR;
+import static net.caseif.flint.spleef.Main.LOCALE_MANAGER;
 import static net.caseif.flint.spleef.Main.PREFIX;
 
 import com.google.common.collect.BiMap;
@@ -62,18 +63,22 @@ public class CreateArenaCommand {
                 if (!WIZARDS.containsKey(((Player) sender).getUniqueId())) {
                     WIZARDS.put(((Player) sender).getUniqueId(), 0);
                     WIZARD_INFO.put(((Player) sender).getUniqueId(), new Object[4]);
-                    sender.sendMessage(PREFIX + INFO_COLOR + "Welcome to the arena creation wizard! To start, please "
-                            + "enter the ID for the new arena.");
-                    sender.sendMessage(PREFIX + INFO_COLOR + "Note: You may exit this wizard at any time by sending "
-                            + EM_COLOR + "cancel" + INFO_COLOR + " in the chat.");
+                    LOCALE_MANAGER.getLocalizable("message.info.command.create.welcome").withPrefix(PREFIX + INFO_COLOR)
+                            .sendTo(sender);
+                    LOCALE_MANAGER.getLocalizable("message.info.command.create.exit-note").withPrefix(PREFIX + INFO_COLOR)
+                            .withReplacements(EM_COLOR
+                                    + LOCALE_MANAGER.getLocalizable("message.info.command.create.cancel-keyword")
+                                    .localizeFor(sender) + INFO_COLOR).sendTo(sender);
                 } else {
-                    sender.sendMessage(PREFIX + ERROR_COLOR + "You are already in the arena creation wizard");
+                    LOCALE_MANAGER.getLocalizable("message.error.command.create.already").withPrefix(PREFIX + ERROR_COLOR)
+                            .sendTo(sender);
                 }
             } else {
-                sender.sendMessage(PREFIX + ERROR_COLOR + "You must be an in-game player to use this command");
+                LOCALE_MANAGER.getLocalizable(PREFIX + ERROR_COLOR + "message.error.general.in-game").sendTo(sender);
             }
         } else {
-            sender.sendMessage(PREFIX + ERROR_COLOR + "[FlintSpleef] You do not have permission to use this command");
+            LOCALE_MANAGER.getLocalizable("message.error.general.permission").withPrefix(PREFIX + ERROR_COLOR)
+                    .sendTo(sender);
         }
     }
 

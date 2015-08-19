@@ -28,7 +28,8 @@
  */
 package net.caseif.flint.spleef.command;
 
-import static net.caseif.flint.spleef.Main.ERROR_COLOR;
+import static net.caseif.flint.spleef.Main.INFO_COLOR;
+import static net.caseif.flint.spleef.Main.LOCALE_MANAGER;
 import static net.caseif.flint.spleef.Main.PREFIX;
 
 import net.caseif.flint.challenger.Challenger;
@@ -50,9 +51,11 @@ public class LeaveArenaCommand {
             Optional<Challenger> challenger = Main.getMinigame().getChallenger(((Player) sender).getUniqueId());
             if (challenger.isPresent()) {
                 challenger.get().removeFromRound();
-                sender.sendMessage("You have been successfully removed from the round");
+                LOCALE_MANAGER.getLocalizable("message.info.command.leave.success").withPrefix(PREFIX + INFO_COLOR)
+                        .sendTo(sender);
             } else {
-                sender.sendMessage(PREFIX + ERROR_COLOR + "You must be an in-game player to use this command");
+                sender.sendMessage(LOCALE_MANAGER.getLocalizable("message.error.general.in-game")
+                        .withPrefix(PREFIX + INFO_COLOR).localize());
             }
         }
     }

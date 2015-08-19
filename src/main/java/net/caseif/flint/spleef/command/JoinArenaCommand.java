@@ -31,6 +31,7 @@ package net.caseif.flint.spleef.command;
 import static net.caseif.flint.spleef.Main.EM_COLOR;
 import static net.caseif.flint.spleef.Main.ERROR_COLOR;
 import static net.caseif.flint.spleef.Main.INFO_COLOR;
+import static net.caseif.flint.spleef.Main.LOCALE_MANAGER;
 import static net.caseif.flint.spleef.Main.PREFIX;
 
 import net.caseif.flint.arena.Arena;
@@ -63,26 +64,35 @@ public class JoinArenaCommand {
                         if (!round.getLifecycleStage().getId().equals(Main.PLAYING_STAGE_ID)) {
                             try {
                                 round.addChallenger(((Player) sender).getUniqueId());
-                                sender.sendMessage(PREFIX + INFO_COLOR + "Successfully joined arena "
-                                        + EM_COLOR + arena.get().getName());
+                                LOCALE_MANAGER.getLocalizable("message.info.command.join.success").withPrefix(PREFIX + INFO_COLOR)
+                                        .withReplacements(EM_COLOR + arena.get().getName()).sendTo(sender);
                             } catch (RoundJoinException ex) {
-                                sender.sendMessage(PREFIX + ERROR_COLOR + "Failed to join: " + ex.getMessage());
+                                LOCALE_MANAGER.getLocalizable("message.error.command.join.exception")
+                                        .withPrefix(PREFIX + ERROR_COLOR).withReplacements(ex.getMessage())
+                                        .sendTo(sender);
                             }
                         } else {
-                            sender.sendMessage(PREFIX + ERROR_COLOR + "You may not join a round in progress");
+                            LOCALE_MANAGER.getLocalizable("message.error.command.join.progress")
+                                    .withPrefix(PREFIX + ERROR_COLOR).sendTo(sender);
                         }
                     } else {
-                        sender.sendMessage(PREFIX + ERROR_COLOR + "No arena by ID " + EM_COLOR + arenaName
-                                + ERROR_COLOR + " exists");
+                        LOCALE_MANAGER.getLocalizable("message.error.command.join.not-found")
+                                .withPrefix(PREFIX + ERROR_COLOR).withReplacements(EM_COLOR + arenaName + ERROR_COLOR)
+                                .sendTo(sender);
                     }
                 } else {
-                    sender.sendMessage(PREFIX + ERROR_COLOR + "Too few arguments! Usage: /fs join [arena]");
+                    LOCALE_MANAGER.getLocalizable("message.error.general.too-few-args").withPrefix(PREFIX + ERROR_COLOR)
+                            .sendTo(sender);
+                    LOCALE_MANAGER.getLocalizable("message.error.general.usage").withPrefix(PREFIX + ERROR_COLOR)
+                            .withReplacements("/fs join [arena]").sendTo(sender);
                 }
             } else {
-                sender.sendMessage(PREFIX + ERROR_COLOR + "You must be an in-game player to use this command");
+                sender.sendMessage(LOCALE_MANAGER.getLocalizable("message.error.general.in-game")
+                        .withPrefix(PREFIX + ERROR_COLOR).localize());
             }
         } else {
-            sender.sendMessage(PREFIX + ERROR_COLOR + "You do not have permission to use this command");
+            LOCALE_MANAGER.getLocalizable("message.error.general.permission").withPrefix(PREFIX + ERROR_COLOR)
+                    .sendTo(sender);
         }
     }
 

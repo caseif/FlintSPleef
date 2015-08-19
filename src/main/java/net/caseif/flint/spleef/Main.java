@@ -37,6 +37,7 @@ import net.caseif.flint.spleef.command.CreateArenaCommand;
 import net.caseif.flint.spleef.listener.BlockListener;
 import net.caseif.flint.spleef.listener.MinigameListener;
 import net.caseif.flint.spleef.listener.PlayerListener;
+import net.caseif.rosetta.LocaleManager;
 
 import com.google.common.collect.ImmutableSet;
 import org.bukkit.Bukkit;
@@ -66,6 +67,8 @@ public class Main extends JavaPlugin {
     private static JavaPlugin plugin;
     private static Minigame mg;
 
+    public static LocaleManager LOCALE_MANAGER;
+
     public static int MIN_PLAYERS = Integer.MAX_VALUE;
 
     static {
@@ -78,9 +81,12 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        LOCALE_MANAGER = new LocaleManager(this);
+
         if (FlintCore.getApiRevision() < MIN_FLINT_VERSION) {
-            getLogger().severe("Flint API revision " + MIN_FLINT_VERSION
-                    + " or greater is required for FlintSpleef to run! Disabling...");
+            String error = LOCALE_MANAGER.getLocalizable("log.error.flint-version")
+                    .withReplacements(MIN_FLINT_VERSION + "").localize();
+            getLogger().severe(error);
             getServer().getPluginManager().disablePlugin(this);
             return;
         }

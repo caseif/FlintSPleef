@@ -30,6 +30,7 @@ package net.caseif.flint.spleef.listener;
 
 import static net.caseif.flint.spleef.Main.EM_COLOR;
 import static net.caseif.flint.spleef.Main.INFO_COLOR;
+import static net.caseif.flint.spleef.Main.LOCALE_MANAGER;
 import static net.caseif.flint.spleef.Main.MIN_PLAYERS;
 import static net.caseif.flint.spleef.Main.PLAYING_STAGE_ID;
 import static net.caseif.flint.spleef.Main.PREFIX;
@@ -44,6 +45,7 @@ import net.caseif.flint.event.round.challenger.ChallengerJoinRoundEvent;
 import net.caseif.flint.spleef.Main;
 import net.caseif.flint.spleef.command.JoinArenaCommand;
 import net.caseif.flint.util.physical.Location3D;
+import net.caseif.rosetta.Localizable;
 
 import com.google.common.eventbus.Subscribe;
 import org.bukkit.Bukkit;
@@ -73,14 +75,21 @@ public class MinigameListener implements Listener {
     public void onRoundChangeLifecycleStage(RoundChangeLifecycleStageEvent event) {
         // check if round is in progress
         if (event.getStageAfter().getId().equals(Main.PLAYING_STAGE_ID)) {
-            event.getRound().broadcast(PREFIX + INFO_COLOR + "The round has started!");
+            Localizable msg = LOCALE_MANAGER.getLocalizable("message.info.event.start").withPrefix(PREFIX + INFO_COLOR);
+            for (Challenger ch : event.getRound().getChallengers()) {
+                msg.sendTo(Bukkit.getPlayer(ch.getUniqueId()));
+            }
             // iterate challengers
             for (Challenger challenger : event.getRound().getChallengers()) {
                 // give 'em all shovels
                 Bukkit.getPlayer(challenger.getUniqueId()).getInventory().addItem(Main.SHOVEL);
             }
         } else if (event.getStageAfter().getId().equals(Main.PREPARING_STAGE_ID)) {
-            event.getRound().broadcast(PREFIX + INFO_COLOR + "Round is starting!");
+            Localizable msg = LOCALE_MANAGER.getLocalizable("message.info.event.prepare")
+                    .withPrefix(PREFIX + INFO_COLOR);
+            for (Challenger ch : event.getRound().getChallengers()) {
+                msg.sendTo(Bukkit.getPlayer(ch.getUniqueId()));
+            }
         }
     }
 
@@ -88,10 +97,14 @@ public class MinigameListener implements Listener {
     public void onRoundTimerTick(RoundTimerTickEvent event) {
         if (event.getRound().getRemainingTime() % 10 == 0 && event.getRound().getRemainingTime() > 0) {
             if (!event.getRound().getLifecycleStage().getId().equals(WAITING_STAGE_ID)) {
-                event.getRound()
-                        .broadcast(PREFIX + INFO_COLOR + "The round will "
-                                + (event.getRound().getLifecycleStage().getId().equals(PREPARING_STAGE_ID)
-                                ? "begin" : "end") + " in " + event.getRound().getRemainingTime() + " seconds!");
+                Localizable msg = LOCALE_MANAGER.getLocalizable(
+                        event.getRound().getLifecycleStage().getId().equals(PREPARING_STAGE_ID)
+                                ? "message.info.event.begin-countdown"
+                                : "message.info.event.end-countdown")
+                        .withPrefix(PREFIX + INFO_COLOR).withReplacements(event.getRound().getRemainingTime() + "");
+                for (Challenger ch : event.getRound().getChallengers()) {
+                    msg.sendTo(Bukkit.getPlayer(ch.getUniqueId()));
+                }
             }
         }
 
@@ -113,10 +126,12 @@ public class MinigameListener implements Listener {
         if (event.getRound().getChallengers().size() <= 1) {
             if (event.getRound().getLifecycleStage().getId().equals(PLAYING_STAGE_ID)) {
                 if (event.getRound().getChallengers().size() == 1) {
-                    Bukkit.broadcastMessage(PREFIX + INFO_COLOR
-                            + event.getRound().getChallengers().toArray(new Challenger[1])[0].getName()
-                            + " has won in arena " + EM_COLOR + event.getRound().getArena().getName() + INFO_COLOR
-                            + "!");
+                    LOCALE_MANAGER.getLocalizable("message.info.event.win").withPrefix(PREFIX + INFO_COLOR)
+                            .withReplacements(
+                                    EM_COLOR + event.getRound().getChallengers().toArray(new Challenger[1])[0].getName()
+                                            + INFO_COLOR,
+                                    EM_COLOR + event.getRound().getArena().getName() + INFO_COLOR)
+                            .broadcast();
                     event.getRound().end();
                 } else if (event.getRound().getChallengers().isEmpty()) {
                     event.getRound().end();
