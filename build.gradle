@@ -64,7 +64,7 @@ repositories {
 
 // Project dependencies
 dependencies {
-	compile 'net.caseif.flint:flint:1.0-SNAPSHOT'
+	compile 'net.caseif.flint:flint:1.0'
     compile 'org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT'
     shadow 'net.caseif.rosetta:rosetta:1.0.0-SNAPSHOT'
 }
