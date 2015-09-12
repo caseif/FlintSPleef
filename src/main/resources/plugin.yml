@@ -2,7 +2,7 @@ name: FlintSpleef
 description: A technology demonstration for the Flint framework.
 author: Max Roncacé
 website: http://caseif.net/
-version: 1.0.0-SNAPSHOT
+version: 1.0.0
 main: net.caseif.flint.spleef.Main
 depend: [Steel]
 
