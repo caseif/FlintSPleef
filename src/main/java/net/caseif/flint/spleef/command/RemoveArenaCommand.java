@@ -37,6 +37,7 @@ import static net.caseif.flint.spleef.Main.PREFIX;
 import net.caseif.flint.arena.Arena;
 import net.caseif.flint.spleef.Main;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import org.bukkit.command.CommandSender;
 
@@ -55,7 +56,10 @@ public class RemoveArenaCommand {
     public static void handle(CommandSender sender, String[] args) {
         if (sender.hasPermission("flintspleef.arena.remove")) {
             if (args.length > 2) {
-                Optional<Arena> arena = Main.getMinigame().getArena(args[2]);
+                String[] idArray = new String[args.length - 2];
+                System.arraycopy(args, 2, idArray, 0, idArray.length);
+                String arenaId = Joiner.on(" ").join(idArray);
+                Optional<Arena> arena = Main.getMinigame().getArena(arenaId);
                 if (arena.isPresent()) {
                     if (!arena.get().getRound().isPresent() || warned.contains(sender.getName())) {
                         if (arena.get().getRound().isPresent()) {
@@ -77,7 +81,7 @@ public class RemoveArenaCommand {
                         warned.add(sender.getName());
                     }
                 } else {
-                    sender.sendMessage(PREFIX + ERROR_COLOR + "Arena with ID " + EM_COLOR + args[2] + ERROR_COLOR
+                    sender.sendMessage(PREFIX + ERROR_COLOR + "Arena with ID " + EM_COLOR + arenaId + ERROR_COLOR
                             + " does not exist");
                 }
             } else {

@@ -74,7 +74,8 @@ public class CreateArenaCommand {
                             .withPrefix(PREFIX + ERROR_COLOR).sendTo(sender);
                 }
             } else {
-                LOCALE_MANAGER.getLocalizable(PREFIX + ERROR_COLOR + "message.error.general.in-game").sendTo(sender);
+                LOCALE_MANAGER.getLocalizable("message.error.general.in-game").withPrefix(PREFIX + ERROR_COLOR)
+                        .sendTo(sender);
             }
         } else {
             LOCALE_MANAGER.getLocalizable("message.error.general.permission").withPrefix(PREFIX + ERROR_COLOR)

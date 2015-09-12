@@ -39,6 +39,7 @@ import net.caseif.flint.exception.round.RoundJoinException;
 import net.caseif.flint.round.Round;
 import net.caseif.flint.spleef.Main;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -54,8 +55,10 @@ public class JoinArenaCommand {
         if (sender.hasPermission("flintspleef.play")) {
             if (sender instanceof Player) {
                 if (args.length > 1) {
-                    String arenaName = args[1];
-                    Optional<Arena> arena = Main.getMinigame().getArena(arenaName);
+                    String[] idArray = new String[args.length - 1];
+                    System.arraycopy(args, 1, idArray, 0, idArray.length);
+                    String arenaId = Joiner.on(" ").join(idArray);
+                    Optional<Arena> arena = Main.getMinigame().getArena(arenaId);
                     if (arena.isPresent()) {
                         Round round = arena.get().getRound().orNull();
                         if (round == null) {
@@ -78,7 +81,7 @@ public class JoinArenaCommand {
                         }
                     } else {
                         LOCALE_MANAGER.getLocalizable("message.error.command.join.not-found")
-                                .withPrefix(PREFIX + ERROR_COLOR).withReplacements(EM_COLOR + arenaName + ERROR_COLOR)
+                                .withPrefix(PREFIX + ERROR_COLOR).withReplacements(EM_COLOR + arenaId + ERROR_COLOR)
                                 .sendTo(sender);
                     }
                 } else {
