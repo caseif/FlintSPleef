@@ -64,7 +64,8 @@ public class JoinArenaCommand {
                         if (!round.getLifecycleStage().getId().equals(Main.PLAYING_STAGE_ID)) {
                             try {
                                 round.addChallenger(((Player) sender).getUniqueId());
-                                LOCALE_MANAGER.getLocalizable("message.info.command.join.success").withPrefix(PREFIX + INFO_COLOR)
+                                LOCALE_MANAGER.getLocalizable("message.info.command.join.success")
+                                        .withPrefix(PREFIX + INFO_COLOR)
                                         .withReplacements(EM_COLOR + arena.get().getName()).sendTo(sender);
                             } catch (RoundJoinException ex) {
                                 LOCALE_MANAGER.getLocalizable("message.error.command.join.exception")

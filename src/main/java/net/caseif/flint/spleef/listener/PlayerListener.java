@@ -72,6 +72,8 @@ public class PlayerListener implements Listener {
                     .getLocalizable("message.info.command.create.cancel-keyword")
                     .localizeFor(event.getPlayer()))) {
                 event.setCancelled(true);
+                WIZARDS.remove(event.getPlayer().getUniqueId());
+                WIZARD_INFO.remove(event.getPlayer().getUniqueId());
                 LOCALE_MANAGER.getLocalizable("message.info.command.create.cancelled").withPrefix(PREFIX + ERROR_COLOR)
                         .sendTo(event.getPlayer());
                 return;
@@ -79,14 +81,20 @@ public class PlayerListener implements Listener {
             event.setCancelled(true);
             switch (stage) {
                 case WIZARD_ID:
-                    increment(event.getPlayer());
                     if (!Main.getMinigame().getArena(event.getMessage()).isPresent()) {
-                        WIZARD_INFO.get(event.getPlayer().getUniqueId())[WIZARD_ID] = event.getMessage();
-                        LOCALE_MANAGER.getLocalizable("message.info.command.create.id").withPrefix(PREFIX + INFO_COLOR)
-                                .withReplacements(EM_COLOR + event.getMessage().toLowerCase() + INFO_COLOR)
-                                .sendTo(event.getPlayer());
+                        if (!event.getMessage().contains(".")) {
+                            increment(event.getPlayer());
+                            WIZARD_INFO.get(event.getPlayer().getUniqueId())[WIZARD_ID] = event.getMessage();
+                            LOCALE_MANAGER.getLocalizable("message.info.command.create.id")
+                                    .withPrefix(PREFIX + INFO_COLOR)
+                                    .withReplacements(EM_COLOR + event.getMessage().toLowerCase() + INFO_COLOR)
+                                    .sendTo(event.getPlayer());
+                        } else {
+                            LOCALE_MANAGER.getLocalizable("message.error.command.create.invalid-id")
+                                    .withPrefix(PREFIX + ERROR_COLOR).sendTo(event.getPlayer());
+                        }
                     } else {
-                        LOCALE_MANAGER.getLocalizable("message.error.command.create.bad-id")
+                        LOCALE_MANAGER.getLocalizable("message.error.command.create.id-already-exists")
                                 .withPrefix(PREFIX + ERROR_COLOR).sendTo(event.getPlayer());
                     }
                     break;

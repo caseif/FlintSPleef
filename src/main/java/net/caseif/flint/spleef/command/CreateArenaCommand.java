@@ -65,13 +65,13 @@ public class CreateArenaCommand {
                     WIZARD_INFO.put(((Player) sender).getUniqueId(), new Object[4]);
                     LOCALE_MANAGER.getLocalizable("message.info.command.create.welcome").withPrefix(PREFIX + INFO_COLOR)
                             .sendTo(sender);
-                    LOCALE_MANAGER.getLocalizable("message.info.command.create.exit-note").withPrefix(PREFIX + INFO_COLOR)
-                            .withReplacements(EM_COLOR
+                    LOCALE_MANAGER.getLocalizable("message.info.command.create.exit-note")
+                            .withPrefix(PREFIX + INFO_COLOR).withReplacements(EM_COLOR
                                     + LOCALE_MANAGER.getLocalizable("message.info.command.create.cancel-keyword")
                                     .localizeFor(sender) + INFO_COLOR).sendTo(sender);
                 } else {
-                    LOCALE_MANAGER.getLocalizable("message.error.command.create.already").withPrefix(PREFIX + ERROR_COLOR)
-                            .sendTo(sender);
+                    LOCALE_MANAGER.getLocalizable("message.error.command.create.already")
+                            .withPrefix(PREFIX + ERROR_COLOR).sendTo(sender);
                 }
             } else {
                 LOCALE_MANAGER.getLocalizable(PREFIX + ERROR_COLOR + "message.error.general.in-game").sendTo(sender);
