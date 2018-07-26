@@ -3,6 +3,7 @@ description: A technology demonstration for the Flint framework.
 author: Max Roncacé
 website: http://caseif.net/
 version: 1.0.0
+api-version 1.13
 main: net.caseif.flint.spleef.Main
 depend: [Steel]
 
