@@ -50,7 +50,7 @@ import java.util.ArrayList;
 
 public class Main extends JavaPlugin {
 
-    private static final int MIN_FLINT_VERSION = 1;
+    private static final int MIN_FLINT_VERSION = 5;
 
     public static final String WAITING_STAGE_ID = "waiting";
     public static final String PREPARING_STAGE_ID = "preparing";
@@ -72,11 +72,11 @@ public class Main extends JavaPlugin {
     public static int MIN_PLAYERS = Integer.MAX_VALUE;
 
     static {
-        SHOVELS.add(Material.WOOD_SPADE);
-        SHOVELS.add(Material.STONE_SPADE);
-        SHOVELS.add(Material.IRON_SPADE);
-        SHOVELS.add(Material.GOLD_SPADE);
-        SHOVELS.add(Material.DIAMOND_SPADE);
+        SHOVELS.add(Material.WOODEN_SHOVEL);
+        SHOVELS.add(Material.STONE_SHOVEL);
+        SHOVELS.add(Material.IRON_SHOVEL);
+        SHOVELS.add(Material.GOLDEN_SHOVEL);
+        SHOVELS.add(Material.DIAMOND_SHOVEL);
     }
 
     @Override

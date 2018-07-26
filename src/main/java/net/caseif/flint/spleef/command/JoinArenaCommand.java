@@ -36,6 +36,7 @@ import static net.caseif.flint.spleef.Main.PREFIX;
 
 import net.caseif.flint.arena.Arena;
 import net.caseif.flint.exception.round.RoundJoinException;
+import net.caseif.flint.round.JoinResult;
 import net.caseif.flint.round.Round;
 import net.caseif.flint.spleef.Main;
 
@@ -65,15 +66,18 @@ public class JoinArenaCommand {
                             round = arena.get().createRound();
                         }
                         if (!round.getLifecycleStage().getId().equals(Main.PLAYING_STAGE_ID)) {
-                            try {
-                                round.addChallenger(((Player) sender).getUniqueId());
+                            JoinResult res = round.addChallenger(((Player) sender).getUniqueId());
+                            if (res.getStatus() == JoinResult.Status.SUCCESS) {
                                 LOCALE_MANAGER.getLocalizable("message.info.command.join.success")
                                         .withPrefix(PREFIX + INFO_COLOR)
                                         .withReplacements(EM_COLOR + arena.get().getName()).sendTo(sender);
-                            } catch (RoundJoinException ex) {
+                            } else {
                                 LOCALE_MANAGER.getLocalizable("message.error.command.join.exception")
-                                        .withPrefix(PREFIX + ERROR_COLOR).withReplacements(ex.getMessage())
-                                        .sendTo(sender);
+                                        .withPrefix(PREFIX + ERROR_COLOR).withReplacements(
+                                        res.getStatus() == JoinResult.Status.INTERNAL_ERROR
+                                                ? res.getThrowable().getMessage()
+                                                : "(unknown)"
+                                ).sendTo(sender);
                             }
                         } else {
                             LOCALE_MANAGER.getLocalizable("message.error.command.join.progress")
